@@ -8,25 +8,44 @@ This is my own work as defined by the University's Academic Misconduct Policy.
 """
 import random
 
+MAX_HUNGER = 5
+MAX_TIRED = 5
+
 class Animal:
+    # Global Variables for each animal
     id_counter = 0
-    def __init__(self, name, category, species, diet, habitat, sound):
+    MASTER_NAMES = []
+    available_names = []
+
+    def __init__(self, name, category,
+                 species, diet, habitat,
+                 sound, hunger=0, tired=0):
+        # Create a unique identifier for each animal populating the zoo
         self.__id = Animal.id_counter
         Animal.id_counter += 1
-
+        # Broad attributes
         self.__name = name
-        self.__category = category # TODO: broaden categories; mammal; reptile; etc.
+        self.__category = category
         self.__species = species # TODO: incorporate species; penguin; rosella; etc.
+        # Behavioural attributes
         self.__age = random.randint(1, 20)
-        self.__diet = diet
-        self.__habitat = habitat
+        self.__diet = diet # TODO: Ensure eat method utilises appropriate hierarchy
+        self.__habitat = habitat # TODO: Import enclosure, ensure descendants populate appropriate habitats
         self.__sound = sound
+        self.__hunger = hunger
+        self.__tired = tired
 
     def __str__(self):
-        return (f"ID: {self.__id}, Name: {self.__name}, Age: {self.__age}\n"
+        return (f"\nID: {self.__id}, Name: {self.__name}, Age: {self.__age}\n"
                 f"Species: {self.__species}, Category: {self.__category}\n"
                 f"Habitat: {self.__habitat}, Diet: {self.__diet}\n"
                 f"Sound: {self.__sound}")
+
+    @classmethod
+    def release(cls, name):
+        # cls points to descendant classes
+        if name not in cls.available_names and name in cls.MASTER_NAMES:
+            cls.available_names.append(name)
 
     def sleep(self):
         # TODO: Develop this function, incorporate an attribute
@@ -40,11 +59,8 @@ class Animal:
         # TODO: Develop this function so subclasses utilise their own diet.
         pass
 
-    def set_name(self, name):
-        self.__name = name
-
-    def set_species(self, species):
-        pass
+    def get_name(self):
+        return self.__name
 
 """
 TODO: Program subclasses underneath each category of animal.
@@ -55,7 +71,11 @@ class Mammal(Animal):
         super().__init__(name,"Mammal", species, diet, habitat, sound)
 
 class Lion(Mammal):
-    available_names = ["Simba", "Nala", "Mufasa", "Scar", "Leo"]
+    MASTER_NAMES = [
+        "Simba", "Nala", "Mufasa",
+        "Scar", "Leo"
+    ]
+    available_names = MASTER_NAMES.copy()
     def __init__(self, name=None):
         chosen_name = random.choice(Lion.available_names)
         Lion.available_names.remove(chosen_name)
@@ -68,31 +88,42 @@ class Lion(Mammal):
         )
 
 class Elephant(Mammal):
+    MASTER_NAMES = [
+        "Elly", "Stampy", "Dumbo",
+        "Bigfoot", "Peanut"
+    ]
+    available_names = MASTER_NAMES.copy()
     def __init__(self, name=None):
-        names = ["Elly", "Stampy", "Dumbo", "Bigfoot", "Peanut"]
-        chosen_name = random.choice(names)
+        chosen_name = random.choice(Elephant.available_names)
+        Elephant.available_names.remove(chosen_name)
         super().__init__(
             chosen_name,
             "Elephant",
             "Herbivore",
             "Savannah",
-            "Trumpet"
+            "Brrrrr!"
         )
 
 class Kangaroo(Mammal):
+    MASTER_NAMES = [
+        "Skippy the Bush Kangaroo", "Hopscotch",
+        "Matilda", "Sheila", "Thumper"
+    ]
+    available_names = MASTER_NAMES.copy()
     def __init__(self, name=None):
-        names = ["Skippy the Bush Kangaroo", "Hopscotch", "Matilda", "Sheila"]
-        chosen_name = random.choice(names)
+        chosen_name = random.choice(Kangaroo.available_names)
+        Kangaroo.available_names.remove(chosen_name)
         super().__init__(
             chosen_name,
             "Kangaroo",
             "Herbivore",
-            "Savannah"
+            "Savannah",
+            "Thump!"
         )
 
 class Reptile(Animal):
-    def __init__(self, name, species, diet, habitat):
-        super().__init__(name, "Reptile", species, diet, habitat)
+    def __init__(self, name, species, diet, habitat, sound):
+        super().__init__(name, "Reptile", species, diet, habitat, sound)
 
 class Crocodile(Reptile):
     def __init__(self, name=None):
@@ -103,20 +134,14 @@ class Crocodile(Reptile):
             "Crocodile",
             "Carnivore",
             "Wetlands",
+            "Snap!"
         )
 
 class Bird(Animal):
-    def __init__(self):
-        super().__init__(None, None, "Bird")
-
-class Amphibian(Animal):
-    def __init__(self):
-        super().__init__(None, None, "Amphibian")
-
-class Fish(Animal):
-    def __init__(self):
-        super().__init__(None, None, "Fish")
+    def __init__(self, name, species, diet, habitat, sound):
+        super().__init__(name, "Bird", species, diet, habitat, sound)
 
 class Insect(Animal):
-    def __init__(self):
-        super().__init__(None, None, "Insect")
+    def __init__(self, name, species, diet, habitat, sound):
+        super().__init__(name, "Insect", species, diet, habitat, sound)
+

@@ -8,16 +8,30 @@ This is my own work as defined by the University's Academic Misconduct Policy.
 """
 
 from animal import Lion
+from enclosure import Savannah
 
-lions = []
 count = 0
+enclosure = Savannah()
 
 while count < 6 and Lion.available_names:
     lion = Lion()
-    lions.append(lion)
-    print(lion)
+    enclosure.add_animal(lion)
+    print(enclosure)
     count += 1
 
-print("\nSummary: ")
-for lion in lions:
-    print(f"- {lion._Animal__name}")
+print("\nSummary before transfer: ")
+for lion in enclosure:
+    print(f"- {lion.get_name()}")
+
+# Transfer a lion out of the zoo
+for lion in enclosure:
+    if lion.get_name() == "Mufasa":
+        enclosure.remove(lion)
+        Lion.release("Mufasa")
+        break
+
+print("\nSummary after transfer: ")
+for lion in enclosure:
+    print(f"- {lion.get_name()}")
+
+print("Available names:", Lion.available_names)

@@ -63,6 +63,8 @@ class Animal:
         return self.__name
     def get_species(self):
         return self.__species
+    def get_habitat(self):
+        return self.__habitat
 
 """
 TODO: Program subclasses underneath each category of animal.
@@ -128,9 +130,11 @@ class Reptile(Animal):
         super().__init__(name, "Reptile", species, diet, habitat, sound)
 
 class Crocodile(Reptile):
+    MASTER_NAMES = ["Ali", "Snappy", "Niblet", "Chomper", "Raptor"]
+    available_names = MASTER_NAMES.copy()
     def __init__(self, name=None):
-        names = ["Ali", "Snappy", "Niblet", "Chomper", "Raptor"]
-        chosen_name = random.choice(names)
+        chosen_name = random.choice(Crocodile.available_names)
+        Crocodile.available_names.remove(chosen_name)
         super().__init__(
             chosen_name,
             "Crocodile",
@@ -139,11 +143,35 @@ class Crocodile(Reptile):
             "Snap!"
         )
 
+class Turtle(Reptile):
+    MASTER_NAMES = ["Leonardo", "Donatello", "Raphael", "Michelangelo", "Splinter"]
+    available_names = MASTER_NAMES.copy()
+    def __init__(self, name=None):
+        chosen_name = random.choice(Turtle.available_names)
+        Turtle.available_names.remove(chosen_name)
+        super().__init__(
+            chosen_name,
+            "Turtle",
+            "Herbivore",
+            "Wetlands",
+            "Grunt!"
+        )
+
 class Bird(Animal):
     def __init__(self, name, species, diet, habitat, sound):
         super().__init__(name, "Bird", species, diet, habitat, sound)
 
-class Insect(Animal):
-    def __init__(self, name, species, diet, habitat, sound):
-        super().__init__(name, "Insect", species, diet, habitat, sound)
+class Rosella(Bird):
+    MASTER_NAMES = ["Rosie", "Ronnie", "Tweedledee", "Tweedledum"]
+    available_names = MASTER_NAMES.copy()
+    def __init__(self, name=None):
+        chosen_name = random.choice(Rosella.available_names)
+        Rosella.available_names.remove(chosen_name)
+        super().__init__(
+            chosen_name,
+            "Rosella",
+            "Herbivore",
+            "Aviary",
+            "Sqwuak!"
+        )
 

@@ -7,7 +7,7 @@ Username: walsq001
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
 
-from animal import Lion
+from animal import Lion, Elephant
 from enclosure import Savannah
 
 count = 0
@@ -18,6 +18,9 @@ while count < 6 and Lion.available_names:
     enclosure.add_animal(lion)
     print(enclosure)
     count += 1
+
+elephant = Elephant()
+enclosure.add_animal(elephant)
 
 print("\nSummary before transfer: ")
 for lion in enclosure:

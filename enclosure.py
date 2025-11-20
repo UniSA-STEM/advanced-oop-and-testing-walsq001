@@ -16,6 +16,7 @@ class Enclosure:
         self.__cleanliness = 0
         self.__animals = []
         self.__type = type
+        self.__allowed_animals = None
 
     def __str__(self):
         if self.__animals:
@@ -35,7 +36,20 @@ class Enclosure:
         return iter(self.__animals)
 
     def add_animal(self, animal):
-        self.__animals.append(animal)
+        # TODO: Add enclosure type checks
+        # If no animals in enclosure, add it
+        if not self.__animals:
+           self.__allowed_animals = animal.get_species()
+           self.__animals.append(animal)
+        # Else type check there isn't a different species
+        # Add it to the enclosure if the same species
+        # Return print statement otherwise
+        else:
+            if animal.get_species() == self.__allowed_animals:
+                self.__animals.append(animal)
+            else:
+                print(f"Cannot add {animal.get_species()} into this enclosure.\n"
+                      f"Only {self.__allowed_animals}'s are allowed")
 
     def remove(self, animal):
         if animal in self.__animals:

@@ -61,6 +61,8 @@ class Animal:
 
     def get_name(self):
         return self.__name
+    def get_species(self):
+        return self.__species
 
 """
 TODO: Program subclasses underneath each category of animal.

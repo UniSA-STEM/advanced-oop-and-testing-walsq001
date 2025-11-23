@@ -58,7 +58,8 @@ class Enclosure:
                     print(f"Cannot add {animal.get_species()} into this enclosure.\n"
                           f"Only {self.__allowed_animals}'s are allowed")
         else:
-            print(f"Cannot add {animal.get_species()} into this enclosure.\n")
+            print(f"Cannot add {animal.get_species()} into this enclosure.\n"
+                  f"This enclosure is for {self.__type} animals only.")
 
     def remove(self, animal):
         if animal in self.__animals:

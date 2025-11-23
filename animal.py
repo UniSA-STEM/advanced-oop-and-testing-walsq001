@@ -7,9 +7,29 @@ Username: walsq001
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
 import random
+from datetime import datetime
 
-MAX_HUNGER = 5
-MAX_TIRED = 5
+
+class HealthRecord:
+    def __init__(self, description, severity=1, treatment_notes=None, date=None):
+        self.date = date or datetime.now().date()
+        self.description = description
+        self.severity = severity
+        self.treatment_notes = treatment_notes
+        self.active = True
+
+    def close(self, notes=None):
+        if notes:
+            if self.treatment_notes:
+                self.treatment_notes += f"; {notes}"
+            else:
+                self.treatment_notes = notes
+        self.active = False
+
+    def __str__(self):
+        status = "Active" if self.active else "Closed"
+        return (f"{self.date} | severity: {self.severity} \n"
+                f" Status: {status} | {self.description}")
 
 class Animal:
     # Global Variables for each animal
@@ -34,9 +54,11 @@ class Animal:
         self.__sound = sound
         self.__hunger = hunger
         self.__tired = tired
+        self.__health_records = []
 
     def __str__(self):
-        return (f"\nID: {self.__id}, Name: {self.__name}, Age: {self.__age}\n"
+        under = " (Under treatment)" if self.under_treatment() else ""
+        return (f"\nID: {self.__id}, Name: {self.__name}, Age: {self.__age}{under}\n"
                 f"Species: {self.__species}, Category: {self.__category}\n"
                 f"Habitat: {self.__habitat}, Diet: {self.__diet}\n"
                 f"Sound: {self.__sound}")
@@ -47,17 +69,30 @@ class Animal:
         if name not in cls.available_names and name in cls.MASTER_NAMES:
             cls.available_names.append(name)
 
-    def sleep(self):
-        # TODO: Develop this function, incorporate an attribute
-        pass
+    def sleep(self, hours=8):
+        self.__tired = max(0, self.__tired - hours)
+        return self.__tired
 
     def make_sound(self):
-        # TODO: Develop this function so subclasses utilise their own noise.
-        pass
+        print(self.__sound)
+        return self.__sound
 
-    def eat(self):
-        # TODO: Develop this function so subclasses utilise their own diet.
-        pass
+    def eat(self, amount=1):
+        self.__hunger = max(0, self.__hunger - amount)
+        return self.__hunger
+
+    # Health record management
+
+    def add_health_record(self, record):
+        if not isinstance(record, HealthRecord):
+            raise TypeError("Record must be health record")
+        self.__health_records.append(record)
+
+    def get_health_records(self):
+        return list(self.__health_records)
+
+    def under_treatment(self):
+        return any(r.active for r in self.__health_records)
 
     def get_name(self):
         return self.__name

@@ -32,6 +32,17 @@ class Staff:
     def get_role(self):
         return self.__role
 
+    # Basic actions shared by staff
+    def feed(self, animal, amount=1):
+        return animal.eat(amount)
+
+    def clean(self, enclosure):
+        if hasattr(enclosure, enclosure.get_cleanness()):
+            setattr(enclosure, enclosure.get_cleanness(), 0)
+            return True
+        else:
+            return False
+
 class Vet(Staff):
     def __init__(self, name, role):
         name = random.choice(Staff.available_names)

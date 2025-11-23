@@ -25,7 +25,7 @@ class Enclosure:
         if self.__animals:
             animals_str = "\n".join(str(animal) for animal in self.__animals)
         else:
-            animals_str = None
+            animals_str = "No animals in this enclosure."
 
         return (f"\nEnclosure type: {self.__type}\n"
                 f"Enclosure length: {self.__length}\n"
@@ -41,6 +41,9 @@ class Enclosure:
     def get_type(self):
         return self.__type
 
+    def get_cleanness(self):
+        return self.__cleanliness
+
     def add_animal(self, animal):
         # If animal habitat is suitable to enclosure type, continue
         if animal.get_habitat() == self.get_type():
@@ -48,22 +51,31 @@ class Enclosure:
             if not self.__animals:
                self.__allowed_animals = animal.get_species()
                self.__animals.append(animal)
+               return True
             # Else type check there isn't a different species
             # Add it to the enclosure if the same species
             # Return print statement otherwise
             else:
                 if animal.get_species() == self.__allowed_animals:
                     self.__animals.append(animal)
+                    return True
                 else:
                     print(f"Cannot add {animal.get_species()} into this enclosure.\n"
                           f"Only {self.__allowed_animals}'s are allowed")
+                    return False
         else:
             print(f"Cannot add {animal.get_species()} into this enclosure.\n"
                   f"This enclosure is for {self.__type} animals only.")
+            return False
 
     def remove(self, animal):
         if animal in self.__animals:
+            if hasattr(animal, "under_treatment") and animal.under_treatment():
+                print(f"Cannot remove {animal.get_name()}: animal is under treatment.")
+                return False
             self.__animals.remove(animal)
+            return True
+        return False
 
 class Savannah(Enclosure):
     def __init__(self):

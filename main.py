@@ -28,7 +28,7 @@ for lion in enclosure:
     print(f"- {lion.get_name()}")
 
 # Transfer a lion out of the zoo
-for lion in enclosure:
+for lion in list(enclosure):
     if lion.get_name() == "Mufasa":
         enclosure.remove(lion)
         Lion.release("Mufasa")

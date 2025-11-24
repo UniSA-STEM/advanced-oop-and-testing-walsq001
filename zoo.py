@@ -147,3 +147,15 @@ class Zoo:
         print("\nActive health cases:")
         for line in self.report_health_active():
             print(" " + line.replace("\n", "\n "))
+
+        print(f"\nStaff roster:")
+        for staff in self.__staff:
+            assigned_enclosure = [e.get_type() for e in staff.get_assigned_enclosures()]
+            assigned_animals = [a.get_name() for a in staff.get_assigned_animals()]
+            print(f"{staff.get_name()} {staff.get_role()}")
+            if assigned_enclosure:
+                print(f"Enclosure: {', '.join(assigned_enclosure)}")
+            if assigned_animals:
+                print(f"Animals: {', '.join(assigned_animals)}")
+            if not(assigned_enclosure and assigned_animals):
+                print("No enclosure/animals assigned.")

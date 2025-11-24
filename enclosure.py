@@ -1,6 +1,6 @@
 """
 File: enclosure.py
-Description: A brief description of this Python module.
+Description: Enclosure classes with species-exclusive rule and cleanliness tracking.
 Author: Scott Quinton Walker
 ID: 110441860
 Username: walsq001
@@ -10,72 +10,71 @@ import random
 
 class Enclosure:
     enclosure_ID = 0
-    def __init__(self, type):
+
+    def __init__(self, habitat_type):
         self.__enclosure_ID = Enclosure.enclosure_ID
         Enclosure.enclosure_ID += 1
-        self.__length = random.randint(50, 100)
-        self.__width = random.randint(50, 100)
+        self.__length = random.randint(300, 500)
+        self.__width = random.randint(300, 500)
         self.__total_area = self.__length * self.__width
-        self.__cleanliness = 0
+        self.__cleanliness = 100 # 0 = dirty, 100 = spotless
         self.__animals = []
-        self.__type = type
-        self.__allowed_animals = None
-
-    def __str__(self):
-        if self.__animals:
-            animals_str = "\n".join(str(animal) for animal in self.__animals)
-        else:
-            animals_str = "No animals in this enclosure."
-
-        return (f"\nEnclosure type: {self.__type}\n"
-                f"Enclosure length: {self.__length}\n"
-                f"Enclosure width: {self.__width}\n"
-                f"Total area: {self.__total_area}\n"
-                f"\n--- Enclosure animals --- \n"
-                f"{animals_str}"
-                )
+        self.__type = habitat_type
+        self.__allowed_species = None
 
     def __iter__(self):
         return iter(self.__animals)
+    def __len__(self):
+        return len(self.__animals)
 
+    # Getters + setters
     def get_type(self):
         return self.__type
-
-    def get_cleanness(self):
+    def get_cleanliness(self):
         return self.__cleanliness
+    def get_id(self):
+        return self.__enclosure_ID
 
+    # Core behaviours
     def add_animal(self, animal):
-        # If animal habitat is suitable to enclosure type, continue
-        if animal.get_habitat() == self.get_type():
-            # If no animals in enclosure, add it
-            if not self.__animals:
-               self.__allowed_animals = animal.get_species()
-               self.__animals.append(animal)
-               return True
-            # Else type check there isn't a different species
-            # Add it to the enclosure if the same species
-            # Return print statement otherwise
-            else:
-                if animal.get_species() == self.__allowed_animals:
-                    self.__animals.append(animal)
-                    return True
-                else:
-                    print(f"Cannot add {animal.get_species()} into this enclosure.\n"
-                          f"Only {self.__allowed_animals}'s are allowed")
-                    return False
-        else:
-            print(f"Cannot add {animal.get_species()} into this enclosure.\n"
-                  f"This enclosure is for {self.__type} animals only.")
+        # Habitat must match enclosure type
+        if animal.get_habitat() != self.get_type():
+            print(f"Cannot add {animal.get_species()} to {self.get_type()} enclosure.\n"
+                  f"(animal habitat is {animal.get_habitat()}.)")
             return False
+
+        # First animal sets the species for this enclosure
+        if not self.__animals:
+            self.__allowed_species = animal.get_species()
+            self.__animals.append(animal)
+            return True
+
+        # Subsequent animals must match the allowed species
+        if animal.get_species() == self.__allowed_species:
+            self.__animals.append(animal)
+            return True
+
+        print(f"Cannot add {animal.get_species()} into this enclosure.\n"
+              f"This enclosure is for {self.__allowed_species} only.")
+        return False
 
     def remove(self, animal):
         if animal in self.__animals:
-            if hasattr(animal, "under_treatment") and animal.under_treatment():
-                print(f"Cannot remove {animal.get_name()}: animal is under treatment.")
+            if animal.under_treatment():
+                print(f"Cannot remove {animal.get_name()} from this enclosure (under treatment).\n")
                 return False
             self.__animals.remove(animal)
+            if not self.__animals:
+                self.__allowed_species = None
             return True
         return False
+
+    def dirty(self, amount=5):
+        self.__cleanliness = max(0, self.__cleanliness - amount)
+        return self.__cleanliness
+    def clean(self, effort=20):
+        self.__cleanliness = min(100, self.__cleanliness + effort)
+        return self.__cleanliness
 
 class Savannah(Enclosure):
     def __init__(self):
@@ -84,3 +83,7 @@ class Savannah(Enclosure):
 class Aviary(Enclosure):
     def __init__(self):
         super().__init__("Aviary")
+
+class Wetlands(Enclosure):
+    def __init__(self):
+        super().__init__("Wetlands")
